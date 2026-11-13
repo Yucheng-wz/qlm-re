@@ -1,0 +1,9 @@
+{
+  "versionCode": 309,
+  "versionName": "3.0.9",
+  "apkUrl": "https://github.com/yanchuan-qlmwz/qlm-release/releases/download/v3.0.9/qlm_re_3.0.9.apk",
+  "apkMirrors": [],
+  "forceUpdate": false,
+  "updateLog": "分发迁移到 GitHub Releases：版本检查与安装包下载均支持国内加速多源回退（ghproxy.net / ghfast.top / gh-proxy.com / jsDelivr），任一节点可用即可完成更新。",
+  "releaseTime": "2026-11-13"
+}
