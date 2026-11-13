@@ -1,9 +1,9 @@
 {
-  "versionCode": 313,
-  "versionName": "3.1.3",
-  "apkUrl": "https://github.com/Yucheng-wz/qlm-re/releases/download/v3.1.3/qlm_re_3.1.3.apk",
+  "versionCode": 314,
+  "versionName": "3.1.4",
+  "apkUrl": "https://github.com/Yucheng-wz/qlm-re/releases/download/v3.1.4/qlm_re_3.1.4.apk",
   "apkMirrors": [],
   "forceUpdate": false,
-  "updateLog": "1. 修复「下载失败，请检查网络后重试」：根因是 Release tag 多了一个点（v.3.1.2），导致四个下载源全部 404\n2. tag 解析改为正则归一化，v3.1.3 / v.3.1.3 / release-3.1.3 都能识别\n3. 版本号相同时优先采用 Releases API 的附件真实地址，不再被人手写的 version.json 带偏\n4. 新增下载侧三重保底：首选通道下载失败时，自动改用另外两个通道的同版本安装包\n5. 错误提示细化：404 不再伪装成「网络不可用」，超时/断网/SSL 各有专门提示\n6. 悬浮窗、识图、自动收码、单号查询等功能全部不变",
+  "updateLog": "1. 下载提速：下载前对全部镜像并发测速，自动从最快的源下载（实测蒲公英 CDN 比 GitHub 代理快 10 倍以上）\n2. 下载中低速熔断：10 秒后仍低于 12 KB/s 自动换下一个源，不再干等\n3. 修复「只在蒲公英发了新版，App 检测不到」：GitHub 说已最新时会继续交叉校验蒲公英和 Gitee\n4. 检查更新增加提示：点击即显示正在检查更新，结束提示已最新或失败\n5. 悬浮窗、识图、自动收码、单号查询等功能全部不变",
   "releaseTime": "2026-11-13"
 }
