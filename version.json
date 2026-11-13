@@ -1,9 +1,9 @@
 {
-  "versionCode": 311,
-  "versionName": "3.1.1",
-  "apkUrl": "https://github.com/Yucheng-wz/qlm-re/releases/download/v3.1.1/qlm_re_3.1.1.apk",
+  "versionCode": 312,
+  "versionName": "3.1.2",
+  "apkUrl": "https://github.com/Yucheng-wz/qlm-re/releases/download/v3.1.2/qlm_re_3.1.2.apk",
   "apkMirrors": [],
   "forceUpdate": false,
-  "updateLog": "1. 应用内更新升级为三重云端保险：GitHub → 蒲公英 → Gitee，前一个通道失败自动切下一个\n2. GitHub 通道双保险：仓库 version.json + Releases API，忘记改 version.json 也能检测到新版本\n3. 安装包下载新增标准 Release 直链兜底，旧配置里的地址写错也能正常下载\n4. 更新弹窗显示本次更新来自哪个通道，便于排查\n5. 悬浮窗、识图、自动收码、单号查询等功能全部不变",
+  "updateLog": "1. 蒲公英通道正式启用完整权限：版本检测直连蒲公英接口，安装包走国内 CDN（oss.pgyer.com），下载更快\n2. 修复短链接写错（quelema → qulema），下载页地址已纠正\n3. 仅有上传权限的 CI Key 也能用：自动退化为只读检测 + 跳下载页，不会让通道失效\n4. 更新弹窗显示本次更新来源（GitHub / 蒲公英 / Gitee）\n5. 悬浮窗、识图、自动收码、单号查询等功能全部不变",
   "releaseTime": "2026-11-13"
 }
