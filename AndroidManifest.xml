@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- 悬浮看码小窗权限 -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <!-- 「看见没」屏幕识别：Android 14 要求 MediaProjection 必须跑在对应类型的前台服务里 -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- 自动收码（仅在本地解析，不上传任何内容）：
+         · RECEIVE_SMS：收到取件短信时立刻触发一次收件箱扫描
+         · READ_SMS：读取最近若干天的短信正文，交给本地正则提取取件码
+         两个权限都只在用户于设置里打开「短信自动收码」后才实际使用 -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+
+    <!-- ML Kit 依赖自带 ACCESS_NETWORK_STATE；OCR 仍为离线模型，继续剔除该权限 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
+
+    <!--
+        自建 Gitee 静态 JSON 自动更新：版本检测需要联网，安装 APK 需要未知来源权限。
+
+        分区存储（Scoped Storage）权限分级：
+          · minSdk = 29（Android 10），APK 统一写入系统公共【下载】文件夹的
+            MediaStore.Downloads 记录，全版本**无需** READ/WRITE_EXTERNAL_STORAGE；
+          · Android 13+ 更是完全不申请任何外部存储读写权限；
+          · 因此这里只保留 REQUEST_INSTALL_PACKAGES（安装未知应用权限），
+            运行时由 UpdateManager 主动判断并引导用户开启。
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!-- Android 11 (API 30)+ 包可见性声明：必须声明菜鸟裹裹与手机淘宝；
+         追加 APK 安装 intent，否则 11+ 上系统安装器不可见 -->
+    <queries>
+        <package android:name="com.cainiao.wireless" />
+        <package android:name="com.taobao.taobao" />
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:mimeType="application/vnd.android.package-archive" />
+        </intent>
+    </queries>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
+
+        <!-- Shizuku Provider：授权 Shizuku 服务绑定（「看见没」免弹窗抓屏） -->
+        <provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:multiprocess="false"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+
+        <!-- 主界面 Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.PickupAssistant.Splash"
+            android:windowSoftInputMode="adjustResize|stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- 系统分享入口：分享截图/照片过来，本地 OCR 自动识别取件码。
+                 OCR_SHARE 分类用于 Direct Share（分享面板长按图标 →【识别取件码】），
+                 动作与 mimeType 与原来完全一致，普通分享行为不变。 -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="com.hnu.pickupassistant.category.OCR_SHARE" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+
+            <!-- 系统分享入口：分享短信/文本过来，正则自动提取取件码 -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
+            <!-- 绑定桌面长按静态快捷方式 -->
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity>
+
+        <!-- 桌面快捷方式透明跳板 Activity（点击快捷方式无需打开主界面即可直接唤起目标路由） -->
+        <activity
+            android:name=".ShortcutTrampolineActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="com.hnu.pickupassistant.ACTION_SHORTCUT_CAINIAO" />
+                <action android:name="com.hnu.pickupassistant.ACTION_SHORTCUT_TAOBAO" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- 悬浮窗「读取剪贴板」透明跳板：后台读完剪贴板即走，不跳回主界面 -->
+        <activity
+            android:name=".ClipboardReadActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@style/Theme.PickupAssistant.Transparent" />
+
+        <!-- 短信自动收码：系统收到短信后触发一次收件箱扫描（解析在后台线程完成） -->
+        <receiver
+            android:name=".receiver.SmsReceiver"
+            android:exported="true">
+            <intent-filter android:priority="999">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- 通知自动收码：读取菜鸟/驿站/电商 App 的取件通知正文，本地解析成取件码 -->
+        <service
+            android:name=".service.PickupNotificationListener"
+            android:exported="false"
+            android:label="取件通知监听"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <!-- 轻量级悬浮看码小窗服务 -->
+        <service
+            android:name=".service.FloatingWindowService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!-- 「看见没」：透明授权跳板 + 截屏前台服务 + 控制中心磁贴 -->
+        <!-- 不能加 noHistory：它要留在栈里等待系统录屏授权结果 -->
+        <activity
+            android:name=".CaptureActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:theme="@style/Theme.PickupAssistant.Transparent" />
+
+        <service
+            android:name=".service.ScreenCaptureService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
+
+        <service
+            android:name=".service.SeeItTileService"
+            android:exported="true"
+            android:icon="@drawable/ic_tile_see"
+            android:label="看见没"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+    <!-- Shizuku UserService：以 shell 身份执行 screencap 免弹窗抓屏。
+         必须以 moe.shizuku.manager.permission.API_V23 权限声明，只有已授权的 Shizuku 才能 bind。 -->
+        <service
+            android:name=".shizuku.CaptureService"
+            android:exported="true"
+            android:permission="moe.shizuku.manager.permission.API_V23" />
+
+        <!-- 自动更新：优先用 MediaStore 公共【下载】Uri 安装；
+             FileProvider 只作兜底，把公共 Download 或应用专属目录下的包以 content:// 授权 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- 兜底 FileProvider：主 provider 在个别 ROM 上解析 paths 失败（Name must not be empty）时，
+             把安装包复制到 cacheDir/apk/ 再用这个「干净配置」的 provider 取 Uri，尽最大努力让用户装上 -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.apkprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/apk_paths" />
+        </provider>
+
+    </application>
+
+</manifest>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 快捷方式 1：取件码列表 -->
+    <shortcut
+        android:shortcutId="shortcut_cainiao_packages"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:shortcutShortLabel="@string/shortcut_cainiao_short"
+        android:shortcutLongLabel="@string/shortcut_cainiao_long">
+        <intent
+            android:action="com.hnu.pickupassistant.ACTION_SHORTCUT_CAINIAO"
+            android:targetPackage="com.hnu.pickupassistant"
+            android:targetClass="com.hnu.pickupassistant.ShortcutTrampolineActivity" />
+    </shortcut>
+
+    <!-- 快捷方式 2：淘宝出库码 -->
+    <shortcut
+        android:shortcutId="shortcut_taobao_barcode"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_view"
+        android:shortcutShortLabel="@string/shortcut_taobao_short"
+        android:shortcutLongLabel="@string/shortcut_taobao_long">
+        <intent
+            android:action="com.hnu.pickupassistant.ACTION_SHORTCUT_TAOBAO"
+            android:targetPackage="com.hnu.pickupassistant"
+            android:targetClass="com.hnu.pickupassistant.ShortcutTrampolineActivity" />
+    </shortcut>
+
+    <!-- 快捷方式 3：分享面板 Direct Share —— 长按「取了吗」图标出现【识别取件码】
+         用户选中后直接把图片送进 MainActivity 的 ACTION_SEND 通道，
+         handleIncomingIntent 会立即走 OCR 预览弹窗（不经过首页列表）。 -->
+    <shortcut
+        android:shortcutId="shortcut_ocr_direct_share"
+        android:enabled="true"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_ocr_short"
+        android:shortcutLongLabel="@string/shortcut_ocr_long">
+        <intent
+            android:action="android.intent.action.SEND"
+            android:targetPackage="com.hnu.pickupassistant"
+            android:targetClass="com.hnu.pickupassistant.MainActivity"
+            android:mimeType="image/*" />
+        <categories android:name="com.hnu.pickupassistant.category.OCR_SHARE" />
+    </shortcut>
+
+    <!-- 把上面的快捷方式登记为图片分享目标：系统分享面板才会把它归到「取了吗」名下 -->
+    <share-target android:targetClass="com.hnu.pickupassistant.MainActivity">
+        <data android:mimeType="image/*" />
+        <category android:name="com.hnu.pickupassistant.category.OCR_SHARE" />
+    </share-target>
+
+</shortcuts>

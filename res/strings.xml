@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">取了吗</string>
+    <string name="shortcut_cainiao_short">取件码列表</string>
+    <string name="shortcut_cainiao_long">打开菜鸟包裹列表</string>
+    <string name="shortcut_taobao_short">淘宝出库码</string>
+    <string name="shortcut_taobao_long">打开淘宝出库码(XN码)</string>
+    <string name="shortcut_ocr_short">识别取件码</string>
+    <string name="shortcut_ocr_long">识别截图中的取件码</string>
+</resources>
