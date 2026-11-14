@@ -1,7 +1,7 @@
 {
-  "versionCode": 3123,
-  "versionName": "3.1.23",
-  "apkUrl": "https://gitee.com/yanchuan_qlmwz/qlm-release/releases/download/v3.1.23/qlm_re_3.1.23.apk",
-  "updateLog": "修复「看见没」磁贴点击后跳转到本 App 而非识别当前屏幕的问题",
+  "versionCode": 3126,
+  "versionName": "3.1.26",
+  "apkUrl": "https://gitee.com/yanchuan_qlmwz/qlm-release/releases/download/v3.1.26/qlm_re_3.1.26.apk",
+  "updateLog": "修复磁贴图标显示错误；深色模式切换时主动刷新桌面图标",
   "minSupportVersionCode": 280
 }
