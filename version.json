@@ -1,9 +1,7 @@
 {
-  "versionCode": 315,
-  "versionName": "3.1.5",
-  "apkUrl": "https://github.com/Yucheng-wz/qlm-re/releases/download/v3.1.5/qlm_re_3.1.5.apk",
-  "apkMirrors": [],
-  "forceUpdate": false,
-  "updateLog": "1. 检测改为三源并发（GitHub / 蒲公英 / Gitee 同时查）：有更新立即弹窗，不再被慢速源拖住\n2. 三个源都没有新版本时才提示已是最新，结论更可靠\n3. 下载源按优先级：蒲公英默认（国内 CDN，实测约 2.9 MB/s），GitHub 保底（组内自动选最快代理）\n4. Gitee 只做版本检测，不参与日常下载\n5. 悬浮窗、识图、自动收码、单号查询等功能全部不变",
-  "releaseTime": "2026-11-13"
+  "versionCode": 3123,
+  "versionName": "3.1.23",
+  "apkUrl": "https://gitee.com/yanchuan_qlmwz/qlm-release/releases/download/v3.1.23/qlm_re_3.1.23.apk",
+  "updateLog": "修复「看见没」磁贴点击后跳转到本 App 而非识别当前屏幕的问题",
+  "minSupportVersionCode": 280
 }
