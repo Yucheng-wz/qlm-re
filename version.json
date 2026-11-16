@@ -1,7 +1,7 @@
 {
-  "versionCode": 3126,
-  "versionName": "3.1.26",
-  "apkUrl": "https://gitee.com/yanchuan_qlmwz/qlm-release/releases/download/v3.1.26/qlm_re_3.1.26.apk",
-  "updateLog": "修复磁贴图标显示错误；深色模式切换时主动刷新桌面图标",
+  "versionCode": 3145,
+  "versionName": "3.1.45",
+  "apkUrl": "https://gitee.com/yanchuan_qlmwz/qlm-release/releases/download/v3.1.45/qlm_re_3.1.45.apk",
+  "updateLog": "识别提速与稳定性：修复超宽行导致整行识别失败、检测尺寸 1536→1280、打开识图时预热 PP-OCRv6 模型",
   "minSupportVersionCode": 280
 }
